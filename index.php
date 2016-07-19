@@ -81,13 +81,14 @@ $posts = array_reverse($posts);
 </form>
 
 <div class="comment">
+
+<?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
 <!-- $post = "2016/07/16 アクション 00:00~00:00" -->
 <?php foreach ($posts as $post) : ?>
-
 <?php list($date, $action, $actiontime) = explode("\t", $post) ?>
 <?php echo $date ?> <?php echo $action ?> <?php echo $actiontime ?><br>
-
 <?php endforeach ?>
+<?php endif ?>
 </div>
 </div>
 </body>
