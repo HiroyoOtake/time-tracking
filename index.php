@@ -1,5 +1,18 @@
 <?php
 
+$dsn = 'mysql:host=localhost;dbname=timetracking;charset=utf8;';
+$user = 'root';
+$password = 'root';
+
+try {
+	$dbh = new PDO($dsn, $user, $password);
+        // echo '成功しました！';
+	} 
+        catch (PDOException $e) {
+	echo $e->getMessage();
+	exit;
+}
+
 // 日付の表示
 $date = date("Y-m-d");
 //var_dump($date);
@@ -8,14 +21,23 @@ $H = date("H");
 $I = date("i");
 $A = date("i",strtotime("+30 minute"));
 
+$sec = strtotime($date);
+// var_dump($sec);
+$sec -= 60*60*24*7;
+// var_dump($sec);
+$date_old = date("Y-m-d",$sec);
+// var_dump($date);
+// var_dump($date_old);
 // データを受け取る
+$error = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$action = $_POST['action'];
+	$d1 = $_POST['d1'];
 	$g1 = $_POST['g1'];
 	$m1 = $_POST['m1'];
 	$g2 = $_POST['g2'];
 	$m2 = $_POST['m2'];
-	$d1 = $_POST['d1'];
 	$d2 = $_POST['d2'];
 
 	if ($action == "") {
@@ -31,39 +53,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	} else {
 		$error = '';
 		
-		@$start_time = $d1 . " " . $g1 . ":" . $m1 . ":00";
-		@$end_time = $d2 . " " .  $g2 . ":" . $m2 . ":00";
-		@$created_at = date("Y-m-d H:i:s");
+		$start_time = $d1 . " " . $g1 . ":" . $m1 . ":00";
+		$end_time = $d2 . " " .  $g2 . ":" . $m2 . ":00";
+		$created_at = date("Y-m-d H:i:s");
+		
+		$sql = "insert into input_info (action, start_time, end_time, created_at) values (:action, :start_time, :end_time, :created_at)";
+		$stmt = $dbh->prepare($sql);
+		
+		// var_dump($sql);
+
+		// $result = mysql_query($sql);
+		// if ($result){
+		$stmt->bindParam(":action", $action);
+		$stmt->bindParam(":start_time", $start_time);
+		$stmt->bindParam(":end_time", $end_time);
+		$stmt->bindParam(":created_at", $created_at);
+
+		$stmt->execute(array(
+			":action" => "$action",
+			":start_time" => "$start_time",
+			":end_time" => "$end_time",
+			":created_at" => "$created_at"
+			));
+		
+		header("Location:index.php");		
 	}
 }
 
-$dsn = 'mysql:host=localhost;dbname=timetracking;charset=utf8;';
-$user = 'root';
-$password = 'root';
 
-try {
-	$dbh = new PDO($dsn, $user, $password);
-        // echo '成功しました！';
-	} 
-        catch (PDOException $e) {
-	echo $e->getMessage();
-	exit;
-}
-
-$sql = "insert into input_info (action, start_time, end_time, created_at) values (:action, :start_time, :end_time, :created_at)";
-$stmt = $dbh->prepare($sql);
-
-$stmt->bindParam(":action", $action);
-$stmt->bindParam(":start_time", $start_time);
-$stmt->bindParam(":end_time", $end_time);
-$stmt->bindParam(":created_at", $created_at);
-
-$stmt->execute(array(
-	":action" => "$action",
-	":start_time" => "$start_time",
-	":end_time" => "$end_time",
-	":created_at" => "$created_at"
-	));
 
 ?>
 
@@ -77,6 +94,7 @@ $stmt->execute(array(
 	<body>
 
 		<div class="timer">
+		<div class="form">
 
 			<form action="" method="post">
 	 
@@ -119,9 +137,10 @@ $stmt->execute(array(
 				<?php endfor ?>
 			</select>
 
-			<input type="submit" name="time-tracking" value="登録">
+			<input type="submit" name="time-tracking" value="登録" class='btn'>
 
 			</form>
+			</div>
 
 			<?php 
 			if ($error != "") {
@@ -131,7 +150,8 @@ $stmt->execute(array(
 
 			<?php
 			//DBからデータを取り出す
-			$sql = "select * from input_info order by id DESC";
+			// $sql = "select * from input_info where start_time > $date_old order by id DESC";
+			$sql = "select * from input_info where start_time > $date_old order by start_time DESC";
 			$stmt = $dbh->prepare($sql);
 
 			$stmt->execute();
@@ -144,12 +164,11 @@ $stmt->execute(array(
 					if ($start_date != $prev_date) {
 						echo '<b><font size="4">' . $start_date . '</font></b>';
 						$prev_date = $start_date;
-											
+					}						
 						list($date_start, $start_time) = explode(" ",$input['start_time']);
 						list($date_end, $end_time) = explode(" ",$input['end_time']);
 
 						echo "<ul><li>" . $input['action'] . "　" .  $start_time . "~" . $end_time . "</li></ul>";
-					}
 			}
 			?>
 

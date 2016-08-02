@@ -43,3 +43,17 @@ body{
 .d2{
 	width: 70px;
 }
+
+.btn {
+	background: #EEE;
+	border: 1px solid #DDD;
+	color: #111;
+	width: 100px;
+	padding: 10px 0;
+}
+
+.form {
+	margin-right: auto;
+	margin-left : auto;
+	width: 750px;
+}
