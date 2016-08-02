@@ -1,4 +1,4 @@
-charset "utf-8";
+@charset "utf-8";
 
 /*
  * セレクタ名{
@@ -7,10 +7,13 @@ charset "utf-8";
  *      */
 
 body{
+	background-color: #f5f5f5;
 	margin-right: auto;
 	margin-left : auto;
 	width: 800px;
-	//height: 100%;
+	font-family:"Open Sans",Arial,sans-serif;
+	font-weight: 400;
+	font-style: normal;
 }
 
 .main{
@@ -18,19 +21,25 @@ body{
 	margin-right: auto;
 	margin-left : auto;
 	width: 800px;
-	//height: 100%;
 }
 
-form{
-	margin-right: auto;
-	margin-left : auto;
-	width: 500px;
-	//height: 100%;
-}
-
-.comment{
-	margin-top: 20px;
+.timer{
 	margin-right: auto;
 	margin-left : auto;
 	width: 800px;
+	margin: 48px auto;
+}
+
+.action{
+	width:250px;
+	height: 30px;
+}
+
+
+.d1{
+	width: 70px;
+}
+
+.d2{
+	width: 70px;
 }
