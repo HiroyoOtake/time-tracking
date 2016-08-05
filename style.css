@@ -10,10 +10,19 @@ body{
 	background-color: #f5f5f5;
 	margin-right: auto;
 	margin-left : auto;
-	width: 800px;
+//	width: 800px;
+	color: #222;
 	font-family:"Open Sans",Arial,sans-serif;
 	font-weight: 400;
 	font-style: normal;
+	margin-top: 0;
+	-webkit-font-smoothing: antialiased;
+}
+
+header{
+	padding: 10px;
+	background: #333;
+	color: #FFF;
 }
 
 .main{
@@ -27,7 +36,7 @@ body{
 	margin-right: auto;
 	margin-left : auto;
 	width: 800px;
-	margin: 48px auto;
+	margin: 30px auto;
 }
 
 .action{
@@ -49,11 +58,69 @@ body{
 	border: 1px solid #DDD;
 	color: #111;
 	width: 100px;
-	padding: 10px 0;
+	padding: 8px 0;
 }
 
 .form {
 	margin-right: auto;
 	margin-left : auto;
+	margin-bottom: 30px;
 	width: 750px;
+}
+
+.date {
+	margin-top: 30px;
+	list-style-type: none;
+	/* border-bottom: 1px solid #e6e6e6; */
+	font-size: 14px;
+	height: 30px;
+	position: relative;
+	font: bold;
+	font-size: large;
+}
+
+.list {
+	list-style-type: none;
+	border-bottom: 1px solid #e6e6e6;
+	font-size: 14px;
+	height: 30px;
+	position: relative;
+	width: 700px;
+}
+
+
+.top-nav {
+	position: relative;
+	z-index: 97;
+	margin-right: -30px;
+	margin-left: -30px;
+	padding: 0 30px;
+	/* width: auto; */
+	width: 750px;
+}
+
+.top-bar {
+	width: 750px;
+	margin-right: auto;
+	margin-left : auto;
+}
+
+.wrapper {
+	min-width: 920px;
+}
+
+.contain-to-grid {
+	width: 100%;
+	background: #333;
+}
+
+.name {
+	color: white;
+	list-style-type: none;
+	margin-left: 3px;
+	font-weight: bold;
+}
+
+.action_time {
+	float: right; 
 }

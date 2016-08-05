@@ -1,17 +1,7 @@
 <?php
+require_once('functions.php');
 
-$dsn = 'mysql:host=localhost;dbname=timetracking;charset=utf8;';
-$user = 'root';
-$password = 'root';
-
-try {
-	$dbh = new PDO($dsn, $user, $password);
-        // echo '成功しました！';
-	} 
-        catch (PDOException $e) {
-	echo $e->getMessage();
-	exit;
-}
+$dbh = connectDb();
 
 // 日付の表示
 $date = date("Y-m-d");
@@ -22,12 +12,9 @@ $I = date("i");
 $A = date("i",strtotime("+30 minute"));
 
 $sec = strtotime($date);
-// var_dump($sec);
 $sec -= 60*60*24*7;
-// var_dump($sec);
 $date_old = date("Y-m-d",$sec);
-// var_dump($date);
-// var_dump($date_old);
+
 // データを受け取る
 $error = '';
 
@@ -59,11 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		
 		$sql = "insert into input_info (action, start_time, end_time, created_at) values (:action, :start_time, :end_time, :created_at)";
 		$stmt = $dbh->prepare($sql);
-		
-		// var_dump($sql);
 
-		// $result = mysql_query($sql);
-		// if ($result){
 		$stmt->bindParam(":action", $action);
 		$stmt->bindParam(":start_time", $start_time);
 		$stmt->bindParam(":end_time", $end_time);
@@ -92,65 +75,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
+		<header>
+			<div class="top-nav contain-to-grid wrapper">
+			<nav class="top-bar">
+			<li class="name">〠 TIME TRACKING</li>
+
+			</nav>
+			</div>
+		</header>
 
 		<div class="timer">
-		<div class="form">
+			<div class="form">
+				<form action="" method="post">
+		 
+				<input type="text" name="action" class="action" placeholder=" 今日は何をしましたか?">
 
-			<form action="" method="post">
-	 
-			<input type="text" name="action" class="action" placeholder=" 今日は何をしましたか?">
+				<input type="text" name="d1" value="<?php echo $date; ?>" class="d1">
 
-			<input type="text" name="d1" value="<?php echo $date; ?>" class="d1">
+				<select name="g1">
+					<?php for ($i = 0; $i <= 23; $i++): ?>
+					<option value="<?php echo $i; ?>"<?php if($H == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
+					<?php endfor ?>
+				</select>
 
-			<select name="g1">
-				<?php for ($i = 0; $i <= 23; $i++): ?>
-				<option value="<?php echo $i; ?>"<?php if($H == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
-				<?php endfor ?>
-			</select>
+				<select name="m1">
+					<?php for ($i = 0; $i <= 59; $i++): ?>
+					<option value="<?php echo $i; ?>"<?php if($I == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
+					<?php endfor ?>
+				</select>
 
-			<select name="m1">
-				<?php for ($i = 0; $i <= 59; $i++): ?>
-				<option value="<?php echo $i; ?>"<?php if($I == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
-				<?php endfor ?>
-			</select>
+				~
 
-			~
+				<input type="text" name="d2" value="<?php echo $date; ?>" class="d2">
 
-			<input type="text" name="d2" value="<?php echo $date; ?>" class="d2">
+				<?php
+				if ($I >= 30) {
+					$H = date("H",strtotime("+1 hour"));
+				}
+				?>
 
-			<?php
-			if ($I >= 30) {
-				$H = date("H",strtotime("+1 hour"));
-				// var_dump($H);
-			}
-			?>
+				<select name="g2">
+					<?php for ($i = 0; $i <= 23; $i++): ?>
+					<option value="<?php echo $i; ?>"<?php if($H == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
+					<?php endfor ?>
+				</select>
 
-			<select name="g2">
-				<?php for ($i = 0; $i <= 23; $i++): ?>
-				<option value="<?php echo $i; ?>"<?php if($H == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
-				<?php endfor ?>
-			</select>
+				<select name="m2">
+					<?php for ($i = 0; $i <= 59; $i++): ?>
+					<option value="<?php echo $i; ?>"<?php if($A == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
+					<?php endfor ?>
+				</select>
 
-			<select name="m2">
-				<?php for ($i = 0; $i <= 59; $i++): ?>
-				<option value="<?php echo $i; ?>"<?php if($A == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
-				<?php endfor ?>
-			</select>
+				<input type="submit" name="time-tracking" value="登録" class='btn'>
 
-			<input type="submit" name="time-tracking" value="登録" class='btn'>
-
-			</form>
-			</div>
-
+				</form>
+			
 			<?php 
 			if ($error != "") {
 				echo $error;
 			}
 			?>
+			</div>
 
 			<?php
 			//DBからデータを取り出す
-			// $sql = "select * from input_info where start_time > $date_old order by id DESC";
 			$sql = "select * from input_info where start_time > $date_old order by start_time DESC";
 			$stmt = $dbh->prepare($sql);
 
@@ -162,13 +150,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			foreach ($rows as $input) {
 				$start_date = substr($input['start_time'], 0, 10);
 					if ($start_date != $prev_date) {
-						echo '<b><font size="4">' . $start_date . '</font></b>';
+						$dotw = date("D",strtotime($start_date));
+						echo '<ul><li class="date">' . $start_date . ' ' . $dotw .'</li></ul>';
 						$prev_date = $start_date;
 					}						
+
 						list($date_start, $start_time) = explode(" ",$input['start_time']);
 						list($date_end, $end_time) = explode(" ",$input['end_time']);
-
-						echo "<ul><li>" . $input['action'] . "　" .  $start_time . "~" . $end_time . "</li></ul>";
+						$start_time = substr($input['start_time'], 11, 5);
+						$end_time = substr($input['end_time'], 11, 5);
+						echo '<ul><li class="list">' . $input['action'] . '　' .  '<span class="action_time">' . $start_time . '~' . $end_time . '</span></li></ul>';
 			}
 			?>
 
