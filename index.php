@@ -3,17 +3,18 @@ require_once('functions.php');
 
 $dbh = connectDb();
 
+// 現在時刻の UNIX timestamp
+$now = time();
+
 // 日付の表示
-$date = date("Y-m-d");
+$date = date("Y-m-d",$now);
 //var_dump($date);
 
-$H = date("H");
-$I = date("i");
-$A = date("i",strtotime("+30 minute"));
+$H = date("H",$now);  //現在時刻の時
+$I = date("i",$now);  //現在時刻の分
+$A = date("i",$now + 60 * 30); //現在時刻の30分後
 
-$sec = strtotime($date);
-$sec -= 60*60*24*7;
-$date_old = date("Y-m-d",$sec);
+$date_old = date("Y-m-d",$now - 60*60*24*7);
 
 // データを受け取る
 $error = '';
@@ -52,14 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$stmt->bindParam(":end_time", $end_time);
 		$stmt->bindParam(":created_at", $created_at);
 
-		$stmt->execute(array(
-			":action" => "$action",
-			":start_time" => "$start_time",
-			":end_time" => "$end_time",
-			":created_at" => "$created_at"
-			));
+		$stmt->execute();
 		
 		header("Location:index.php");		
+		exit;
 	}
 }
 
@@ -93,26 +90,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				<input type="text" name="d1" value="<?php echo $date; ?>" class="d1">
 
 				<select name="g1">
-					<?php for ($i = 0; $i <= 23; $i++): ?>
-					<option value="<?php echo $i; ?>"<?php if($H == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
-					<?php endfor ?>
-				</select>
+			<?php for ($i = 0; $i <= 23; $i++): ?>
+			<option value="<?php echo $i; ?>"<?php if($H == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
+			<?php endfor ?>
+		</select>
 
-				<select name="m1">
-					<?php for ($i = 0; $i <= 59; $i++): ?>
-					<option value="<?php echo $i; ?>"<?php if($I == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
-					<?php endfor ?>
-				</select>
+		<select name="m1">
+			<?php for ($i = 0; $i <= 59; $i++): ?>
+			<option value="<?php echo $i; ?>"<?php if($I == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
+			<?php endfor ?>
+		</select>
 
-				~
+		~
 
-				<input type="text" name="d2" value="<?php echo $date; ?>" class="d2">
+		<input type="text" name="d2" value="<?php echo $date; ?>" class="d2">
 
-				<?php
-				if ($I >= 30) {
-					$H = date("H",strtotime("+1 hour"));
-				}
-				?>
+		<?php if ($I >= 30): ?> 
+			<?php $H = date("H",strtotime("+1 hour")); ?>
+		<?php endif ?>
 
 				<select name="g2">
 					<?php for ($i = 0; $i <= 23; $i++): ?>
@@ -130,38 +125,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 				</form>
 			
-			<?php 
-			if ($error != "") {
-				echo $error;
-			}
-			?>
+				<?php if ($error): ?> 
+				<font color="red">* <?php echo h($error); ?></font><br>
+				<?php endif ?>
 			</div>
 
 			<?php
 			//DBからデータを取り出す
-			$sql = "select * from input_info where start_time > $date_old order by start_time DESC";
+			$sql = "select * from input_info where start_time > :date_old order by start_time DESC";
 			$stmt = $dbh->prepare($sql);
-
+			$stmt->bindParam(":date_old", $date_old);
 			$stmt->execute();
 
 			$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 			$prev_date = '';
-			foreach ($rows as $input) {
-				$start_date = substr($input['start_time'], 0, 10);
-					if ($start_date != $prev_date) {
-						$dotw = date("D",strtotime($start_date));
-						echo '<ul><li class="date">' . $start_date . ' ' . $dotw .'</li></ul>';
-						$prev_date = $start_date;
-					}						
-
-						list($date_start, $start_time) = explode(" ",$input['start_time']);
-						list($date_end, $end_time) = explode(" ",$input['end_time']);
-						$start_time = substr($input['start_time'], 11, 5);
-						$end_time = substr($input['end_time'], 11, 5);
-						echo '<ul><li class="list">' . $input['action'] . '　' .  '<span class="action_time">' . $start_time . '~' . $end_time . '</span></li></ul>';
-			}
 			?>
+
+			<?php foreach ($rows as $input): ?> 
+			       <?php $start_date = substr($input['start_time'], 0, 10); ?>
+
+			<?php if ($start_date != $prev_date): ?> 
+				<?php $prev_date = $start_date; ?>
+				<ul><li class="date"> <?php echo h($start_date); ?> <?php echo date("D",strtotime($start_date)); ?> </li></ul>
+				<?php endif ?>
+										
+			<ul><li class="list"> <?php echo $input['action']; ?> <span class="action_time"> <?php echo substr($input['start_time'],11,5) ?> <?php echo substr($input['end_time'],11,5) ?> </li></ul>
+			<?php endforeach ?>
+
+		}
+		?>
 
 		</div>
 	</body>
