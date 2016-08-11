@@ -20,6 +20,8 @@ body{
 }
 
 header{
+	margin-right: -30px;
+	margin-left: -30px;
 	padding: 10px;
 	background: #333;
 	color: #FFF;
@@ -40,38 +42,62 @@ header{
 }
 
 .action{
-	width:250px;
+	border: none;
+	width: 350px;
 	height: 30px;
+	margin-left: 2px; 
+	font-size: 13px;
+	vertical-align: middle;
 }
 
 
 .d1{
+	border: none;
 	width: 70px;
+	height: 30px;
+	text-align: center;
+	vertical-align: middle;
 }
 
 .d2{
-	width: 70px;
+	border: none;
+	width: 17px;
+	height: 30px;
+	text-align: center;
+	vertical-align: middle;
 }
 
 .btn {
-	background: #EEE;
-	border: 1px solid #DDD;
-	color: #111;
+	background: #4bc800;
+	border: 1px solid #4bc900;
+	color: white;
 	width: 100px;
-	padding: 8px 0;
+	padding: 9px 0;
+	margin-left: 25px;
+	font-size: 12px;
 }
 
 .form {
+	-moz-box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
+	-webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
+	box-shadow: inner 0 0 4px rgba(0, 0, 0, 0.2);
+	background: white;
 	margin-right: auto;
 	margin-left : auto;
-	margin-bottom: 30px;
-	width: 750px;
+	width: 740px;
+	height: 40px;
+	font-size: 8px;
+	
 }
+
+.error {
+	height: 20px;
+}
+
 
 .date {
 	margin-top: 30px;
 	list-style-type: none;
-	/* border-bottom: 1px solid #e6e6e6; */
 	font-size: 14px;
 	height: 30px;
 	position: relative;
@@ -95,7 +121,6 @@ header{
 	margin-right: -30px;
 	margin-left: -30px;
 	padding: 0 30px;
-	/* width: auto; */
 	width: 750px;
 }
 
@@ -123,4 +148,5 @@ header{
 
 .action_time {
 	float: right; 
+
 }

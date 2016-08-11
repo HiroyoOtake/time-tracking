@@ -29,15 +29,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$d2 = $_POST['d2'];
 
 	if ($action == "") {
-		$error = '<font color="red">*アクションを入力して下さい。</font><br>';
+		$error = 'アクションを入力して下さい。';
 	} elseif ($d1 == "") {
-		$error = '<font color="red">*開始日を入力して下さい。</font><br>';
+		$error = '開始日を入力して下さい。';
 	} elseif ($g1 == "" | $m1 == "") {
-		$error = '<font color="red">*開始時刻を入力して下さい。</font><br>';
+		$error = '開始時刻を入力して下さい。';
 	} elseif ($d2 == "") {
-		$error = '<font color="red">*終了日を入力して下さい。</font><br>';
+		$error = '終了日を入力して下さい。';
 	} elseif ($g2 == "" | $m2 == "") {
-		$error = '<font color="red">*終了時刻を入力して下さい。</font><br>';
+		$error = '終了時刻を入力して下さい。';
 	} else {
 		$error = '';
 		
@@ -85,46 +85,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			<div class="form">
 				<form action="" method="post">
 		 
-				<input type="text" name="action" class="action" placeholder=" 今日は何をしましたか?">
+				<input type="text" name="action" class="action" placeholder="  今日は何をしましたか?">
 
 				<input type="text" name="d1" value="<?php echo $date; ?>" class="d1">
+				<input type="text" name="g1" value="<?php echo sprintf('%02d', $H); ?>" class="d2">
+				:
+				<input type="text" name="m1" value="<?php echo sprintf('%02d', $I); ?>" class="d2">
+				~
+				<input type="text" name="d2" value="<?php echo $date; ?>" class="d1">
 
-				<select name="g1">
-			<?php for ($i = 0; $i <= 23; $i++): ?>
-			<option value="<?php echo $i; ?>"<?php if($H == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
-			<?php endfor ?>
-		</select>
+				<?php if ($I >= 30): ?> 
+					<?php $H = date("H",strtotime("+1 hour")); ?>
+				<?php endif ?>
 
-		<select name="m1">
-			<?php for ($i = 0; $i <= 59; $i++): ?>
-			<option value="<?php echo $i; ?>"<?php if($I == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
-			<?php endfor ?>
-		</select>
-
-		~
-
-		<input type="text" name="d2" value="<?php echo $date; ?>" class="d2">
-
-		<?php if ($I >= 30): ?> 
-			<?php $H = date("H",strtotime("+1 hour")); ?>
-		<?php endif ?>
-
-				<select name="g2">
-					<?php for ($i = 0; $i <= 23; $i++): ?>
-					<option value="<?php echo $i; ?>"<?php if($H == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
-					<?php endfor ?>
-				</select>
-
-				<select name="m2">
-					<?php for ($i = 0; $i <= 59; $i++): ?>
-					<option value="<?php echo $i; ?>"<?php if($A == $i): ?>selected<?php endif ?>><?php echo sprintf('%02d', $i); ?></option>
-					<?php endfor ?>
-				</select>
-
+				<input type="text" name="g2" value="<?php echo sprintf('%02d', $H); ?>" class="d2">
+				:
+				<input type="text" name="m2" value="<?php echo sprintf('%02d', $A); ?>" class="d2">
 				<input type="submit" name="time-tracking" value="登録" class='btn'>
 
 				</form>
-			
+			</div>
+
+			<div class="error">
 				<?php if ($error): ?> 
 				<font color="red">* <?php echo h($error); ?></font><br>
 				<?php endif ?>
@@ -150,13 +132,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				<ul><li class="date"> <?php echo h($start_date); ?> <?php echo date("D",strtotime($start_date)); ?> </li></ul>
 				<?php endif ?>
 										
-			<ul><li class="list"> <?php echo $input['action']; ?> <span class="action_time"> <?php echo substr($input['start_time'],11,5) ?> <?php echo substr($input['end_time'],11,5) ?> </li></ul>
+			<ul><li class="list"> <?php echo $input['action']; ?> <span class="action_time"> <?php echo substr($input['start_time'],11,5) ?> ~ <?php echo substr($input['end_time'],11,5) ?> </li></ul>
 			<?php endforeach ?>
+			</div)
 
-		}
-		?>
-
-		</div>
 	</body>
 </html>
 
