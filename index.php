@@ -1,4 +1,5 @@
 <?php
+//delete
 require_once('functions.php');
 
 $dbh = connectDb();
