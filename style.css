@@ -111,9 +111,13 @@ header{
 	text-decoration: none;
 	border-top: 1px solid #BBB;
 	border-left: 1px solid #BBB;
-	border-right: 1px solid black;
-	border-bottom: 1px solid black;
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
 	margin-left: 5px;
+}
+
+.delete_btn:hover {
+	background-color: #e5e5e5;
 }
 
 .form {
