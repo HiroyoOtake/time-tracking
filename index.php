@@ -50,6 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		$_SESSION['start_time'] = '';
 		unset($_SESSION['start_time']);
+
+		header("Location: index.php");
+		exit;
  	} else {
 		$_SESSION['action'] = $_POST['action'];
 
@@ -71,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 	}
 } else {
-	// STARTを押した後に、別のブラウザで開いた時に必要な処理
+	// STARTを押した後、別のブラウザで開いた時に必要な処理
 	if (isset($_SESSION['start_time'])) {
 		$start_time = $_SESSION['start_time'];
 		$btn_word = "STOP";
@@ -147,10 +150,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			<?php if ($start_date != $prev_date): ?> 
 				<?php $prev_date = $start_date; ?>
-				<ul><li class="date"> <?php echo h($start_date); ?> <?php echo date("D",strtotime($start_date)); ?> </li></ul>
+				<ul><li class="date">
+				<?php echo h($start_date); ?> <?php echo date("D",strtotime($start_date)); ?> 
+				</li></ul>
+
 			<?php endif ?>
-										
-			<ul><li class="list"> <?php echo $input['action']; ?> <span class="action_time"> <?php echo substr($input['start_time'],11,5) ?> ~ <?php echo substr($input['end_time'],11,5) ?> </li></ul>
+			<ul><li class="list">
+			<?php echo $input['action']; ?> <span class="action_time"> <?php echo substr($input['start_time'],11,5) ?> ~ <?php echo substr($input['end_time'],11,5) ?> 
+			<a href="delete.php?id=<?php echo h($input['id']); ?>" class="delete_btn">☓</a>
+			</li></ul>
 			<?php endforeach ?>
 			</div>
 	</body>
