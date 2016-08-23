@@ -1,9 +1,12 @@
 <?php
 
-//delete
-require_once('functions.php');
+// オブジェクト指向
+$database = new Database;
+$dbh = $database->connectDb();
 
-$dbh = connectDb();
+// 関数呼び出し
+// $dbh = connectDb();
+// require_once('functions.php');
 
 // 現在時刻の UNIX timestamp
 $now = time();
