@@ -1,12 +1,9 @@
 <?php
+//delete
+require_once('functions.php');
 
-// オブジェクト指向
-$database = new Database;
-$dbh = $database->connectDb();
+$dbh = connectDb();
 
-// 関数呼び出し
-// $dbh = connectDb();
-// require_once('functions.php');
 
 // 現在時刻の UNIX timestamp
 $now = time();
@@ -18,76 +15,70 @@ $date_and_time = date("Y-m-d H:i:s",$now);
 // 一週間前の日付を表示
 $date_7days_ago = date("Y-m-d",$now - 60*60*24*7);
 
-// ボタンの初期状態
-$btn_word = "START";
-$btn_design = "start_btn";
-
 $error = '';
 
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$action = $_POST['action'];
-	// var_dump($_SERVER['REQUEST_METHOD']);
-	@$_SESSION['start_time'] = $_POST['start_time_at_STOP'];
+		$action = $_POST['action'];
 
-	if (isset($_POST['end_time'])) {
-		$start_time = $_SESSION['start_time'];
-		$end_time = $_POST['end_time']; 
-		$created_at = date("Y-m-d H:i:s",$now);
+			// 入力データ チェック
+			if ($action == "") {
+				$error = 'アクションを入力して下さい。';
+			}
 
-		// var_dump($action);
-		// var_dump($start_time);
-		// var_dump($end_time);
-		// var_dump($created_at);
+			// 入力データにエラーがない場合
+			if (!$error) {
 
-		$sql = "insert into input_info (action, start_time, end_time, created_at) values (:action, :start_time, :end_time, :created_at)";
-		$stmt = $dbh->prepare($sql);
+			// $_SESSION['start_time'] が
+			//   セットされていない場合は、スタートボタンが押された時
+			//   セットされている場合は、ストップボタンが押された時
+			if (!isset($_SESSION['start_time'])) {
 
-		$stmt->bindParam(":action", $action);
-		$stmt->bindParam(":start_time", $start_time);
-		$stmt->bindParam(":end_time", $end_time);
-		$stmt->bindParam(":created_at", $created_at);
+			// スタートボタンが押された時刻を start_time とする
+			$_SESSION['start_time'] = $date_and_time;
+			$_SESSION['action']     = $action;
 
-		$stmt->execute();
+			// ブラウザで更新ボタンを押してもアラートが出ないようにする。
+			// (同じページへリダイレクトすることで、GET でアクセスし直すため)
+																													header("Location: index.php");
+																													exit;
+																													}
+																													// 以下はストップボタンが押された時
+			else {
 
-		$_SESSION['start_time'] = '';
-		unset($_SESSION['start_time']);
+				$start_time = $_SESSION['start_time'];
+				$end_time   = $date_and_time;
+				$created_at = $date_and_time;
 
-		header("Location: index.php");
-		exit;
- 	} else {
-		$_SESSION['action'] = $_POST['action'];
+				$sql = "insert into input_info (action, start_time, end_time, created_at) values (:action, :start_time, :end_time, :created_at)";
+				$stmt = $dbh->prepare($sql);
 
-		$btn_word = "START";
-		$btn_design = "start_btn";
-		
-		if ($action == "") {
-			$error = 'アクションを入力して下さい。';
-		} else {
-			$error = '';
+				$stmt->bindParam(":action", $action);
+				$stmt->bindParam(":start_time", $start_time);
+				$stmt->bindParam(":end_time", $end_time);
+				$stmt->bindParam(":created_at", $created_at);
 
-			$_SESSION['start_time'] = $_POST['start_time'];
-			$start_time = $_SESSION['start_time'];
-			
-			if (isset($_SESSION['start_time'])) {
-				$btn_word = "STOP";
-				$btn_design = "stop_btn";
-			} 
-		}
-	}
+				$stmt->execute();
+
+				unset($_SESSION['action']);
+				unset($_SESSION['start_time']);
+
+				header("Location: index.php");
+				exit;
+				}
+			}
+}
+// STARTを押した後、別のブラウザで開いた時に必要な処理
+if (isset($_SESSION['start_time'])) {
+	$btn_word   = "STOP";
+	$btn_design = "stop_btn";
 } else {
-	// STARTを押した後、別のブラウザで開いた時に必要な処理
-	if (isset($_SESSION['start_time'])) {
-		$start_time = $_SESSION['start_time'];
-		$btn_word = "STOP";
-		$btn_design = "stop_btn";
-	} else {
-		$btn_word = "START";
-		$btn_design = "start_btn";
-	}
+	$btn_word   = "START";
+	$btn_design = "start_btn";
 
 }
+
 ?>
 
 <!DOCTYPE html>
