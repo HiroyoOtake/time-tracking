@@ -1,4 +1,14 @@
 <?php
+
+session_start();
+
+if (empty($_SESSION['id']))
+{
+	 header('Location: login.php');
+	 exit;
+
+}
+
 //delete
 require_once('functions.php');
 
@@ -17,7 +27,6 @@ $date_7days_ago = date("Y-m-d",$now - 60*60*24*7);
 
 $error = '';
 
-session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$action = $_POST['action'];
@@ -151,6 +160,7 @@ if (isset($_SESSION['start_time'])) {
 			<?php endif ?>
 			<ul><li class="list">
 			<?php echo $input['action']; ?> <span class="action_time"> <?php echo substr($input['start_time'],11,5) ?> ~ <?php echo substr($input['end_time'],11,5) ?> 
+			<a href="edit.php?id=<?php echo h($input['id']) ?>">[edit]</a>
 			<a href="delete.php?id=<?php echo h($input['id']); ?>" class="delete_btn">☓</a>
 			</li></ul>
 			<?php endforeach ?>
