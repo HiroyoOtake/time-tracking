@@ -3,11 +3,11 @@ require_once('functions.php');
 
 session_start();
 
-// if (empty($_SESSION['id']))
-// {
-// 	header('Location: login.php');
-// 	exit;
-// }
+if (empty($_SESSION['id']))
+{
+	header('Location: login.php');
+	exit;
+}
 
 $errors['email'] = '';
 $errors['password'] = '';
