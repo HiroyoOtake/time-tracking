@@ -17,35 +17,38 @@ if (!$row)
 	header('Location: index.php');
 	exit;
 }
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
 	$action = $_POST['action'];
 	$starttime = $_POST['starttime'];
 	$endtime = $_POST['endtime'];
+	$created_at = $row['created_at'];
 	$errors = array();
+	$errors['starttime'] = '';
+	$errors['endtime'] = '';
 
 	// バリデーション
 	if ($starttime == '')
 	{
-		$errors['starttime'] = '開始時間が未入力です';
+		$errors['starttime'] = '開始時間が未入力です。';
 	}
 
 	if ($endtime == '')
 	{
-		$errors['endtime'] = '終了時間が未入力です';
+		$errors['endtime'] = '終了時間が未入力です。';
 	}
 
 	// バリデーション突破後
 	if (empty($errors))
 	{
 		$dbh = connectDB();
-		$sql = "update input_info set action = :action, start_time = :starttime, end_time = :endtime,  created_at = now() where id = :id";
+		$sql = "update input_info set action = :action, start_time = :starttime, end_time = :endtime,  created_at = :created_at where id = :id";
 		$stmt = $dbh->prepare($sql);
 		$stmt->bindParam(":id", $id);
 		$stmt->bindParam(":action", $action);
 		$stmt->bindParam(":starttime", $starttime);
 		$stmt->bindParam(":endtime", $endtime);
+		$stmt->bindParam(":created_at", $created_at);
 		$stmt->execute();
 
 		header('Location: index.php');
@@ -64,8 +67,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
   <body>
     <form action="" method="post">
 	action: <input type="text" name="action" cols="30" rows="5" value="<?php echo h($row['action']) ?>"><br>
-	starttime: <input type="text" name="starttime" cols="30" rows="5" value="<?php echo h($row['start_time']) ?>"><br>
-	endtime: <input type="text" name="endtime" cols="30" rows="5" value="<?php echo h($row['end_time']) ?>"><br>
+	starttime: <input type="text" name="starttime" cols="30" rows="5" value="<?php echo h($row['start_time']) ?>">
+	<?php if($errors['starttime']) : ?>
+		<?php echo '<font color="red">' . $errors['starttime'] . '</font>' ?>
+	<?php endif; ?>
+	<br>
+	endtime: <input type="text" name="endtime" cols="30" rows="5" value="<?php echo h($row['end_time']) ?>">
+	<?php if($errors['endtime']) : ?>
+		<?php echo '<font color="red">' . $errors['endtime'] . '</font>' ?>
+	<?php endif; ?>
+	<br>
 	<input type="submit" value="登録">
 	<p><a href="index.php">戻る</a></p>
     </form>
