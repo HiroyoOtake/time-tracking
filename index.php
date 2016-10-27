@@ -26,7 +26,6 @@ $date_7days_ago = date("Y-m-d",$now - 60*60*24*7);
 
 $error = '';
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$action = $_POST['action'];
 
@@ -95,6 +94,17 @@ if (isset($_SESSION['start_time'])) {
 		<meta charset="utf-8">
 		<title>timetracking</title>
 		<link rel="stylesheet" href="style.css">
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script>
+			$(function() {
+				var count = 0;
+				setInterval(function() {
+				count++;
+				$('.time').text(count);
+				console.log("指定した実行間隔が経過");
+				}, 1000);
+			});
+		</script>
 	</head>
 	<body>
 		<header>
