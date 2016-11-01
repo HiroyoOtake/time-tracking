@@ -96,14 +96,23 @@ if (isset($_SESSION['start_time'])) {
 		<link rel="stylesheet" href="style.css">
 		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 		<script>
+			function niketa (num){
+				return	('0' + num).slice(-2)
+				};
+<?php if (isset($_SESSION['start_time'])): ?> 
 			$(function() {
-				var count = 0;
+				var count = <?php echo time() - strtotime($_SESSION['start_time']); ?>;
 				setInterval(function() {
 				count++;
-				$('.time').text(count);
+				var sec = count % 60;
+				var min = count / 60;
+				var min2 = min % 60;
+				var hour = min / 60;
+				$('.elapsed_time').text(niketa(Math.floor(hour)) + ':' + niketa(Math.floor(min2)) + ':' + niketa(sec));
 				console.log("指定した実行間隔が経過");
 				}, 1000);
 			});
+<?php endif ?>
 		</script>
 	</head>
 	<body>
@@ -115,16 +124,18 @@ if (isset($_SESSION['start_time'])) {
 			</nav>
 			</div>
 		</header>
+<!-- <div style="width:200px; height:200px; border:1px #000 solid; padding:10px; margin:10px;">abcaaaaaaa</div> -->
 
 		<div class="timer">
 			<div class="form">
 				<form action="" method="post">
-				
 				<input type="text" name="action" class="action" placeholder="  今日は何をしましたか?" 
 					<?php if (isset($_SESSION['start_time'])):?>
 						value="<?php echo $_SESSION['action']; ?>"
 					<?php endif ?>
 				>
+
+			<div class="elapsed_time"></div>
 
 				<input type="hidden" name="start_time" value="<?php echo $date_and_time; ?>">
 				
