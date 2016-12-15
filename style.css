@@ -41,18 +41,6 @@ header{
 	margin: 30px auto;
 }
 
-.action{
-	border: none;
-	width: 592px;
-	height: 30px;
-	margin-bottom: 3px; 
-	margin-top: auto; 
-	margin-left: 2px; 
-	font-size: 13px;
-	vertical-align: middle;
-}
-
-
 .d1{
 	border: none;
 	width: 70px;
@@ -69,16 +57,32 @@ header{
 	vertical-align: middle;
 }
 
+.action{
+	float: left; 
+	border: none;
+	width: 538px;
+	height: 38px;
+	margin-bottom: 3px; 
+	margin-top: 3px; 
+	margin-left: 2px; 
+	/* padding-top:1px */
+	padding-left:10px;
+	font-size: 16px;
+	/* vertical-align: middle; */
+}
+
 .start_btn {
+	float: right; 
 	background: #4bc800;
 	color: white;
 	width: 100px;
 	padding: 10px 0;
-	font-size: 13px;
+	font-size: 16px;
 	border-right: 2px solid #43b400;
 	border-bottom: 2px solid #43b400;
 	border-top: none;
 	border-left: none;
+	height: 45px;
 }
 
 .start_btn:hover {
@@ -86,20 +90,49 @@ header{
 }
 
 .stop_btn {
+	float: right; 
 	background: red;
 	border: 1px solid red;
 	color: white;
 	width: 100px;
 	padding: 10px 0;
-	font-size: 13px;
+	font-size: 16px;
 	border-right: 2px solid #e50000;
 	border-bottom: 2px solid #e50000;
 	border-top: none;
 	border-left: none;
+	height: 45px;
 }
 
 .stop_btn:hover {
 	background-color: #e50000;
+}
+
+.form {
+	/* position: absolute; */
+	-moz-box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
+	-webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
+	box-shadow: inner 0 0 4px rgba(0, 0, 0, 0.2);
+	background: white;
+	margin-right: auto;
+	margin-left : auto;
+	width: 750px;
+	height: 45px;
+	font-size: 8px;
+}
+
+.elapsed_time {
+	/* position: absolute; */
+	display:inline-block;
+	border: none;
+	width: 90px;
+	height: 30px;
+	margin-bottom: 3px; 
+	margin-top: auto; 
+	margin-left: 2px; 
+	font-size: 13px;
+	/* vertical-align: middle; */
+	padding-top:13px;
 }
 
 .delete_btn {
@@ -120,31 +153,26 @@ header{
 	background-color: #e5e5e5;
 }
 
-.form {
-	-moz-box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
-	-webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
-	box-shadow: inner 0 0 4px rgba(0, 0, 0, 0.2);
-	background: white;
-	/* margin-right: auto; */
-	margin-left : 35px;
-	width: 700px;
-	height: 40px;
-	font-size: 8px;
-	
-}
-
 .error {
+	color: red;
+	font-size: 16px;
 	height: 20px;
+	width: 300px;
+	text-align: left;
+	margin-bottom: 20px; 
 }
 
+.main {
+	margin-top: 60px;
+}
 
 .date {
 	margin-top: 30px;
 	list-style-type: none;
 	font-size: 14px;
+	font-weight: bolder;
 	height: 30px;
 	position: relative;
-	font: bold;
 	font-size: large;
 }
 
@@ -156,7 +184,6 @@ header{
 	position: relative;
 	width: 700px;
 }
-
 
 .top-nav {
 	position: relative;
