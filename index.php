@@ -48,10 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			// ブラウザで更新ボタンを押してもアラートが出ないようにする。
 			// (同じページへリダイレクトすることで、GET でアクセスし直すため)
-																													header("Location: index.php");
-																													exit;
-																													}
-																													// 以下はストップボタンが押された時
+			header("Location: index.php");
+			exit;
+			}
+			// 以下はストップボタンが押された時
 			else {
 
 				$start_time = $_SESSION['start_time'];
