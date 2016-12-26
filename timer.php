@@ -4,16 +4,18 @@ session_start();
 
 if (empty($_SESSION['id']))
 {
-	 header('Location: login.php');
+	 header('Location: index.php');
 	 exit;
 }
+
+$id = $_SESSION['id'];
 
 require_once('functions.php');
 $dbh = connectDb();
 
 $sql = "select * from users where id = :id";
 $stmt = $dbh->prepare($sql);
-$stmt->bindParam(":id", $_SESSION['id']);
+$stmt->bindParam(":id", $id);
 $stmt->execute();
 $row = $stmt->fetch();
 
@@ -53,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			// ブラウザで更新ボタンを押してもアラートが出ないようにする。
 			// (同じページへリダイレクトすることで、GET でアクセスし直すため)
-			header("Location: index.php");
+			header("Location: timer.php");
 			exit;
 			}
 			// 以下はストップボタンが押された時
@@ -63,20 +65,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$end_time   = $date_and_time;
 				$created_at = $date_and_time;
 
-				$sql = "insert into input_info (action, start_time, end_time, created_at) values (:action, :start_time, :end_time, :created_at)";
+				$sql = "insert into input_info (action, start_time, end_time, created_at, user_id) values (:action, :start_time, :end_time, :created_at, :user_id)";
 				$stmt = $dbh->prepare($sql);
 
 				$stmt->bindParam(":action", $action);
 				$stmt->bindParam(":start_time", $start_time);
 				$stmt->bindParam(":end_time", $end_time);
 				$stmt->bindParam(":created_at", $created_at);
+				$stmt->bindParam(":user_id", $id);
 
 				$stmt->execute();
 
 				unset($_SESSION['action']);
 				unset($_SESSION['start_time']);
 
-				header("Location: index.php");
+				header("Location: timer.php");
 				exit;
 				}
 			}
@@ -140,7 +143,7 @@ if (isset($_SESSION['start_time'])) {
 			<div class="top-nav contain-to-grid wrapper">
 				<nav class="top-bar">
 					<li class="name">〠 TIME TRACKING
-					<?php echo h($row['email']) ?>としてログインしています
+					<?php echo h($row['user_name']) ?>としてログインしています
 					<a href="logout.php">ログアウト</a> </li>
 				</nav>
 			</div>
@@ -180,9 +183,10 @@ if (isset($_SESSION['start_time'])) {
 			<div class="main">
 				<?php
 				//一週間前までのデータを表示
-				$sql = "select * from input_info where start_time > :date_7days_ago order by start_time DESC";
+				$sql = "select * from input_info where user_id = :user_id and start_time > :date_7days_ago order by start_time DESC";
 				$stmt = $dbh->prepare($sql);
 				$stmt->bindParam(":date_7days_ago", $date_7days_ago);
+				$stmt->bindParam(":user_id", $id);
 				$stmt->execute();
 
 				$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);

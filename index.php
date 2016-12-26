@@ -4,22 +4,22 @@ require_once('functions.php');
 
 session_start();
 
-if (!empty($_SESSION['id']))
-{
-	header('Location: timer.php');
-	exit;
-}
+// if (!empty($_SESSION['id']))
+// {
+// 	header('Location: timer.php');
+// 	exit;
+// }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	$email = $_POST['email'];
+	$name = $_POST['name'];
 	$password = $_POST['password'];
 	
 	$errors = array();
 
 	// バリデーション
-	if ($email == '')
+	if ($name == '')
 	{
-		$errors['email'] = 'メールアドレスが未入力です。';
+		$errors['name'] = 'ユーザ名が未入力です。';
 	}
 
 	if ($password == '')
@@ -32,17 +32,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
        	        {
 			// 入力された値を持つレコードがあるか調べる
 			$dbh = connectDB();
-			$sql = "select * from users where email = :email and password = :password";
+			$sql = "select * from users where user_name = :name and password = :password";
 			$stmt = $dbh->prepare($sql);
 
-			$stmt->bindParam(":email", $email);
+			$stmt->bindParam(":name", $name);
 			$stmt->bindParam(":password", $password);
 
 			$stmt->execute();
 
 			$row = $stmt->fetch();
 			
-			// 該当レコードがあった場合は$_SESSION['id']に値を持たせてindex.phpへ
+			// 該当レコードがあった場合は$_SESSION['id']に値を持たせてtimer.phpへ
 			// なかった場合は、エラーメッセージを出す
 
 			if ($row)
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				header('Location: timer.php');
 				exit;
 			} else { 
-				echo 'ユーザーネームかメールアドレスが間違っています';
+				echo 'ユーザー名またはパスワードが間違っています';
 			}
 		}
 }
@@ -85,15 +85,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						</div>
 						<form action="" method="post">
 						<div class="error">
-							<?php if ($errors['email']) : ?>
-							<?php echo h($errors['email']) . "<br>" ?>
+							<?php if ($errors['name']) : ?>
+							<?php echo h($errors['name']) . "<br>" ?>
 							<?php endif ?>
 							<?php if ($errors['password']) : ?>
 							<?php echo h($errors['password']) . "<br>" ?>
 							<?php endif ?>
 						</div>
 							<p>
-							<input type="text" name="email" placeholder="ユーザ名">
+							<input type="text" name="name" placeholder="ユーザ名">
 							</p>
 							<p>
 							<input type="text" name="password" placeholder="パスワード">
