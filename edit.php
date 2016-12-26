@@ -12,6 +12,9 @@ $stmt->execute();
 
 $row = $stmt->fetch();
 
+// var_dump($row);
+// die;
+
 if (!$row)
 {
 	header('Location: index.php');
@@ -23,9 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 	$starttime = $_POST['starttime'];
 	$endtime = $_POST['endtime'];
 	$created_at = $row['created_at'];
+	
 	$errors = array();
-	$errors['starttime'] = '';
-	$errors['endtime'] = '';
 
 	// バリデーション
 	if ($starttime == '')

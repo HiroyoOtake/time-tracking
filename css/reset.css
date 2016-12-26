@@ -1,0 +1,41 @@
+@charset "utf-8";
+
+/*
+ * セレクタ名{
+ *      プロパティー名: 値;
+ *      }
+ *      */
+
+#all {
+	font-family: 'webfont_light',Helvetica,Arial,sans-serif;
+	/* font-family: "Meiryo", sans-serif; */
+	font-size: 16px;
+}
+
+#all a {
+	text-decoration: none;	
+}
+
+p,h1,h2,h3,h4,ul,ol,dl,dd,body,form,footer,main {
+	margin: 0;
+	padding: 0;
+}
+
+img {
+	vertical-align: bottom;
+	border: none;
+}
+
+ul, ol {
+	list-style-type: none;
+}
+
+main {
+	display: block;
+}
+
+div:after,ul:after,ol:after,main:after,footer:after {
+	content: "";
+	display: block;
+	clear: both;
+}

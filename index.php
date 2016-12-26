@@ -1,194 +1,121 @@
 <?php
 
-session_start();
-
-if (empty($_SESSION['id']))
-{
-	 header('Location: login.php');
-	 exit;
-}
-
-//delete
 require_once('functions.php');
 
-$dbh = connectDb();
+session_start();
 
-
-// 現在時刻の UNIX timestamp
-$now = time();
-
-// 日時の表示
-$date = date("Y-m-d",$now);
-$date_and_time = date("Y-m-d H:i:s",$now);
-
-// 一週間前の日付を表示
-$date_7days_ago = date("Y-m-d",$now - 60*60*24*7);
-
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-		$action = $_POST['action'];
-
-			// 入力データ チェック
-			if ($action == "") {
-				$error = '* アクションを入力して下さい。';
-			}
-
-			// 入力データにエラーがない場合
-			if (!$error) {
-
-			// $_SESSION['start_time'] が
-			//   セットされていない場合は、スタートボタンが押された時
-			//   セットされている場合は、ストップボタンが押された時
-			if (!isset($_SESSION['start_time'])) {
-
-			// スタートボタンが押された時刻を start_time とする
-			$_SESSION['start_time'] = $date_and_time;
-			$_SESSION['action']     = $action;
-
-			// ブラウザで更新ボタンを押してもアラートが出ないようにする。
-			// (同じページへリダイレクトすることで、GET でアクセスし直すため)
-			header("Location: index.php");
-			exit;
-			}
-			// 以下はストップボタンが押された時
-			else {
-
-				$start_time = $_SESSION['start_time'];
-				$end_time   = $date_and_time;
-				$created_at = $date_and_time;
-
-				$sql = "insert into input_info (action, start_time, end_time, created_at) values (:action, :start_time, :end_time, :created_at)";
-				$stmt = $dbh->prepare($sql);
-
-				$stmt->bindParam(":action", $action);
-				$stmt->bindParam(":start_time", $start_time);
-				$stmt->bindParam(":end_time", $end_time);
-				$stmt->bindParam(":created_at", $created_at);
-
-				$stmt->execute();
-
-				unset($_SESSION['action']);
-				unset($_SESSION['start_time']);
-
-				header("Location: index.php");
-				exit;
-				}
-			}
+if (!empty($_SESSION['id']))
+{
+	header('Location: timer.php');
+	exit;
 }
-// STARTを押した後、別のブラウザで開いた時に必要な処理
-if (isset($_SESSION['start_time'])) {
-	$btn_word   = "STOP";
-	$btn_design = "stop_btn";
-} else {
-	$btn_word   = "START";
-	$btn_design = "start_btn";
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	$email = $_POST['email'];
+	$password = $_POST['password'];
+	
+	$errors = array();
+
+	// バリデーション
+	if ($email == '')
+	{
+		$errors['email'] = 'メールアドレスが未入力です。';
+	}
+
+	if ($password == '')
+	{
+		$errors['password'] = 'パスワードが未入力です。';
+	}
+		
+	        // バリデーション突破後
+	        if (empty($errors))
+       	        {
+			// 入力された値を持つレコードがあるか調べる
+			$dbh = connectDB();
+			$sql = "select * from users where email = :email and password = :password";
+			$stmt = $dbh->prepare($sql);
+
+			$stmt->bindParam(":email", $email);
+			$stmt->bindParam(":password", $password);
+
+			$stmt->execute();
+
+			$row = $stmt->fetch();
+			
+			// 該当レコードがあった場合は$_SESSION['id']に値を持たせてindex.phpへ
+			// なかった場合は、エラーメッセージを出す
+
+			if ($row)
+			{
+				$_SESSION['id'] = $row['id'];
+				header('Location: timer.php');
+				exit;
+			} else { 
+				echo 'ユーザーネームかメールアドレスが間違っています';
+			}
+		}
 }
 
 ?>
-
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>timetracking</title>
-		<link rel="stylesheet" href="style.css">
-		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-		<script>
-			function niketa (num){
-				return	('0' + num).slice(-2)
-				};
-			<?php if (isset($_SESSION['start_time'])): ?> 
-						$(function() {
-							var count = <?php echo time() - strtotime($_SESSION['start_time']); ?>;
-							setInterval(function() {
-							count++;
-							var sec = count % 60;
-							var min = count / 60;
-							var min2 = min % 60;
-							var hour = min / 60;
-							$('.elapsed_time').text(niketa(Math.floor(hour)) + ':' + niketa(Math.floor(min2)) + ':' + niketa(sec));
-							console.log("指定した実行間隔が経過");
-							}, 1000);
-						});
-			<?php endif ?>
-		</script>
+		<title>timetracking - login</title>
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/login.css">
 	</head>
 	<body>
-		<header>
-			<div class="top-nav contain-to-grid wrapper">
-				<nav class="top-bar">
-					<li class="name">〠 TIME TRACKING</li>
-				</nav>
-			</div>
-		</header>
-
-		<div class="timer">
-			<div class="form">
-				<form action="" method="post">
-					<input type="text" name="action" class="action" placeholder="今日は何をしましたか?" 
-						<?php if (isset($_SESSION['start_time'])):?>
-							value="<?php echo $_SESSION['action']; ?>"
-						<?php endif ?>
-					>
-
-					<div class="elapsed_time"></div>
-
-					<input type="hidden" name="start_time" value="<?php echo $date_and_time; ?>">
-					
-					<?php if(isset($_SESSION['start_time'])): ?>
-						<input type="hidden" name="end_time" value="<?php echo $date_and_time; ?>">
-						<input type="hidden" name="start_time_at_STOP" value="<?php echo $start_time; ?>">
-					<?php endif ?>
-
-					<input type="submit" name="time-tracking" value="<?php echo $btn_word ?>" class="<?php echo $btn_design ?>">
-
-				</form>
-
-				<!-- アクション未入力時のエラーを表示 -->
-				<div class="error">
-					<?php if ($error): ?> 
-						<?php echo h($error); ?><br>
-					<?php endif ?>
+		<div id ="all">
+			<header>
+					<h1><a href="index.php"><img src="img/logo.png" width="300px" height="50px" alt="ロゴ"></a></h1> 
+					<p><a href="signup.php">新規登録</a></p>
 				</div>
+			</header>
 
-			</div>
+			<main>
+				<div class="loginForm">
+					<video src="mov/degi.mov" muted loop autoplay></video>
+					<div class="table">
+						<div class="text">
+							<p class="midashi">過ごした時間を記録する。</p>
+							<p>これから取り掛かろうとしている作業の項目を入力し、</p>
+							<p>始めるときにスタートボタン、終わるときにストップボタンを押すことで</p>
+							<p>自分が何に時間を使っているかを簡単に可視化することができます。</p>
+						</div>
+						<form action="" method="post">
+						<div class="error">
+							<?php if ($errors['email']) : ?>
+							<?php echo h($errors['email']) . "<br>" ?>
+							<?php endif ?>
+							<?php if ($errors['password']) : ?>
+							<?php echo h($errors['password']) . "<br>" ?>
+							<?php endif ?>
+						</div>
+							<p>
+							<input type="text" name="email" placeholder="ユーザ名">
+							</p>
+							<p>
+							<input type="text" name="password" placeholder="パスワード">
+							</p>
+							<p class="legal">ユーザ登録をしていない方は、<strong>ユーザ名/パスワード:guest</strong>でログインして頂くか、<a href="signup">新規登録</a>を行って下さい。</p>
+							<p class="gotoCat"><button name="submit" class="button">ログイン</button></p>
+						</form>
+					</div>
+				</div>
+			</main>
 
-			<div class="main">
-				<?php
-				//一週間前までのデータを表示
-				$sql = "select * from input_info where start_time > :date_7days_ago order by start_time DESC";
-				$stmt = $dbh->prepare($sql);
-				$stmt->bindParam(":date_7days_ago", $date_7days_ago);
-				$stmt->execute();
-
-				$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-				$prev_date = '';
-				?>
-
-				<?php foreach ($rows as $input): ?> 
-					<?php $start_date = substr($input['start_time'], 0, 10); ?>
-
-					<?php if ($start_date != $prev_date): ?> 
-						<?php $prev_date = $start_date; ?>
-						<ul><li class="date">
-						<?php echo h($start_date); ?> <?php echo date("D",strtotime($start_date)); ?> 
-						</li></ul>
-					<?php endif ?>
-						
+			<footer>
+				<div class="inner">
 					<ul>
-						<li class="list">
-							<?php echo $input['action']; ?> <span class="action_time"> <?php echo substr($input['start_time'],11,5) ?> ~ <?php echo substr($input['end_time'],11,5) ?> 
-							<a href="edit.php?id=<?php echo h($input['id']) ?>">[edit]</a>
-							<a href="delete.php?id=<?php echo h($input['id']); ?>" class="delete_btn">☓</a>
-						</li>
+						<li><a href="#">プライバシー</a></li>  
+						<li><a href="#">セキュリティ</a></li> 
+						<li><a href="#">お問い合わせ</a></li>
 					</ul>
-				<?php endforeach ?>
-			</div>
+					<p>Copyright 2016 Otake. All rights reserved.</p>
+				</div>
+			</footer>
 		</div>
-	</body>
+	 </body>
 </html>
-
 
