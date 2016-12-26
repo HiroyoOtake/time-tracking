@@ -11,6 +11,8 @@ craete table input_info (
 	created_at datetime
 );
 
+ALTER TABLE input_info ADD user_id int;
+
 
 // usersテーブル
 use timetracking;
@@ -21,3 +23,12 @@ create table users (
 	password varchar(32),
 	created_at datetime
 );
+
+ALTER TABLE users ADD user_name varchar(255);
+
+alter table users modify user_name varchar(255) after email;
+
+alter table users drop email;
+
+insert into users (id, user_name, password, created_at) values (1,'guest','guest',now());
+insert into users (id, user_name, password, created_at) values (2,'otake','otake',now());
