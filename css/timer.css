@@ -23,6 +23,24 @@ body{
 	-webkit-font-smoothing: antialiased;
 }
 
+
+a:link {
+	color: #D358F7;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #fff;
+}
+
+a:active {
+	color: #fff;
+}
+
+.header .right-head a:link {
+	color: #f5f5f5;
+}
+
 header{
 	margin-right: -30px;
 	margin-left: -30px;
@@ -35,7 +53,7 @@ header{
 	margin-top: 20px;
 	margin-right: auto;
 	margin-left : auto;
-	width: 800px;
+	width: 730px;
 }
 
 .timer{
@@ -213,11 +231,24 @@ header{
 	background: #333;
 }
 
-.name {
+.header {
 	color: white;
 	list-style-type: none;
 	margin-left: 3px;
 	font-weight: bold;
+}
+
+.left-head {
+	float: left; 
+}
+
+.right-head {
+	float: right; 
+}
+
+.right-head p {
+	float: left; 
+	margin-right: 10px; 
 }
 
 .action_time {
