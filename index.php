@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	<body>
 		<div id ="all">
 			<header>
-					<h1><a href="index.php"><img src="img/logo.png" width="300px" height="50px" alt="ロゴ"></a></h1> 
+					<h1><a href="index.php"><img src="img/logo2.png" alt="ロゴ"></a></h1> 
 					<p><a href="signup.php">新規登録</a></p>
 				</div>
 			</header>

@@ -102,7 +102,8 @@ if (isset($_SESSION['start_time'])) {
 		<meta charset="utf-8">
 		<title>timetracking</title>
 		<link rel="shortcut icon" href="img/timetracking.ico">
-		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/timer.css">
 		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 		<script>
 			function niketa (num){
@@ -142,9 +143,15 @@ if (isset($_SESSION['start_time'])) {
 		<header>
 			<div class="top-nav contain-to-grid wrapper">
 				<nav class="top-bar">
-					<li class="name">〠 TIME TRACKING
-					<?php echo h($row['user_name']) ?>としてログインしています
-					<a href="logout.php">ログアウト</a> </li>
+					<div class="header">
+						<div class="left-head">
+							<p>〠 TIME TRACKING</p>
+						</div>
+						<div class="right-head">
+							<p><?php echo h($row['user_name']) ?>さんこんにちは</p>
+							<p><a href="logout.php">ログアウト</a></p>
+						</div>
+					</div>
 				</nav>
 			</div>
 		</header>
