@@ -1,4 +1,4 @@
-// input_infoテーブル
+-- input_infoテーブル
 create database timetracking character set utf8;
 
 use timetracking;
@@ -14,7 +14,7 @@ craete table input_info (
 ALTER TABLE input_info ADD user_id int;
 
 
-// usersテーブル
+-- usersテーブル
 use timetracking;
 
 create table users (
