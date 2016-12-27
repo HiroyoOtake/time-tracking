@@ -3,7 +3,7 @@ create database timetracking character set utf8;
 
 use timetracking;
 
-craete table input_info (
+create table input_info (
 	id int primary key auto_increment,
 	action varchar(255),
 	start_time datetime,

@@ -13,7 +13,7 @@ $stmt->execute();
 $row = $stmt->fetch();
 
 if (!$row) {
-	header('Location: index.php');
+	header('Location: timer.php');
 	exit;
 }
 

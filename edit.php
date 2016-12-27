@@ -17,7 +17,7 @@ $row = $stmt->fetch();
 
 if (!$row)
 {
-	header('Location: index.php');
+	header('Location: timer.php');
 	exit;
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
