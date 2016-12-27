@@ -4,11 +4,11 @@ require_once('functions.php');
 
 session_start();
 
-// if (!empty($_SESSION['id']))
-// {
-// 	header('Location: timer.php');
-// 	exit;
-// }
+if (!empty($_SESSION['id']))
+{
+	header('Location: index.php');
+	exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$name = $_POST['name'];
