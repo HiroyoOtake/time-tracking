@@ -2,12 +2,16 @@
 
 require_once('functions.php');
 
+session_start();
+
 $id = $_GET['id'];
+$user_id = $_SESSION['id'];
 
 $dbh = connectDB();
-$sql = "select * from input_info where id = :id";
+$sql = "select * from input_info where id = :id and user_id = :user_id";
 $stmt = $dbh->prepare($sql);
 $stmt->bindParam(":id", $id);
+$stmt->bindParam(":user_id", $user_id);
 $stmt->execute();
 
 $row = $stmt->fetch();
